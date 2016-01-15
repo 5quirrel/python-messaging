@@ -40,7 +40,7 @@ class PreviewIterator(object):
         if len(self._cached_values) > 0:
             return self._cached_values.pop(0)
         else:
-            return self._it.next()
+            return next(self._it)
 
     def preview(self):
         """
@@ -61,7 +61,7 @@ class PreviewIterator(object):
         if self._preview_pos < len(self._cached_values):
             value = self._cached_values[self._preview_pos]
         else:
-            value = self._it.next()
+            value = next(self._it)
             self._cached_values.append(value)
 
         self._preview_pos += 1

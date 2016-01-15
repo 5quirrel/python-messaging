@@ -15,6 +15,7 @@
 import codecs
 import sys
 import traceback
+from future.utils import iteritems
 
 # data from
 # http://snoops.roy202.org/testerman/browser/trunk/plugins/codecs/gsm0338.py
@@ -195,11 +196,11 @@ QUESTION_MARK = chr(0x3f)
 
 # unicode -> default GSM 03.38
 def_regular_encode_dict = \
-    dict((u, g) for g, u in def_regular_decode_dict.iteritems())
+    dict((u, g.encode()) for g, u in iteritems(def_regular_decode_dict))
 
 # unicode -> default escaped GSM 03.38 characters
 def_escape_encode_dict = \
-    dict((u, g) for g, u in def_escape_decode_dict.iteritems())
+    dict((u, g.encode()) for g, u in iteritems(def_escape_decode_dict))
 
 
 def encode(input_, errors='strict'):
@@ -215,7 +216,7 @@ def encode(input_, errors='strict'):
         except KeyError:
             if c in def_escape_encode_dict:
                 # OK, let's encode it as an escaped characters
-                result.append('\x1b')
+                result.append(b'\x1b')
                 result.append(def_escape_encode_dict[c])
             else:
                 if errors == 'strict':
@@ -228,7 +229,7 @@ def encode(input_, errors='strict'):
                 else:
                     raise UnicodeError("Unknown error handling")
 
-    ret = ''.join(result)
+    ret = b''.join(result)
     return ret, len(ret)
 
 
@@ -252,7 +253,7 @@ def decode(input_, errors='strict'):
                 result.append(u'\xa0')
         else:
             try:
-                result.append(def_regular_decode_dict[c])
+                result.append(def_regular_decode_dict[chr(c)])
             except KeyError:
                 # error handling: unassigned byte, must be > 0x7f
                 if errors == 'strict':

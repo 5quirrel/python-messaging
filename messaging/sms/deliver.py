@@ -8,6 +8,7 @@ from messaging.utils import (swap, swap_number, encode_bytes, debug,
 from messaging.sms import consts
 from messaging.sms.base import SmsBase
 from messaging.sms.udh import UserDataHeader
+from builtins import chr
 
 
 class SmsDeliver(SmsBase):
@@ -184,7 +185,7 @@ class SmsDeliver(SmsBase):
             data = data[ud_len:].tolist()
             _bytes = [int("%02X%02X" % (data[i], data[i + 1]), 16)
                             for i in range(0, len(data), 2)]
-            self.text = u''.join(list(map(unichr, _bytes)))
+            self.text = u''.join(list(map(chr, _bytes)))
 
     pdu = property(lambda self: self._pdu, _set_pdu)
 

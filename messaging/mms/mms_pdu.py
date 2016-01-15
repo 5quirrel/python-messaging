@@ -19,6 +19,7 @@ import random
 from messaging.utils import debug
 from messaging.mms import message, wsp_pdu
 from messaging.mms.iterator import PreviewIterator
+from past.builtins import xrange
 
 
 def flatten_list(x):
@@ -281,7 +282,7 @@ class MMSDecoder(wsp_pdu.Decoder):
         try:
             name = mms_field_names[byte][1]
             mms_value = getattr(MMSDecoder, 'decode_%s' % name)(byte_iter)
-        except wsp_pdu.DecodeError, msg:
+        except wsp_pdu.DecodeError as msg:
             raise wsp_pdu.DecodeError('Invalid MMS Header: Could '
                                       'not decode MMS-value: %s' % msg)
         except:
@@ -316,7 +317,7 @@ class MMSDecoder(wsp_pdu.Decoder):
             # TODO: add proper support for charsets...
             try:
                 charset = wsp_pdu.Decoder.decode_well_known_charset(byte_iter)
-            except wsp_pdu.DecodeError, msg:
+            except wsp_pdu.DecodeError as msg:
                 raise Exception('encoded_string_value decoding error - '
                                 'Could not decode Charset value: %s' % msg)
 
@@ -844,7 +845,7 @@ class MMSEncoder(wsp_pdu.Encoder):
                     ret = getattr(MMSEncoder,
                                   'encode_%s' % expected_type)(header_value)
                     encoded_header.extend(ret)
-                except wsp_pdu.EncodeError, msg:
+                except wsp_pdu.EncodeError as msg:
                     raise wsp_pdu.EncodeError('Error encoding parameter '
                                               'value: %s' % msg)
                 except:

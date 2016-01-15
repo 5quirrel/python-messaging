@@ -47,6 +47,7 @@ from datetime import datetime
 
 from messaging.utils import debug
 from messaging.mms.iterator import PreviewIterator
+from past.builtins import xrange
 
 wsp_pdu_types = {
     0x01: 'Connect',
@@ -804,7 +805,7 @@ class Decoder:
         """
         try:
             media_value = Decoder.decode_constrained_encoding(byte_iter)
-        except DecodeError, msg:
+        except DecodeError as msg:
             raise DecodeError('Invalid Constrained-media: %s' % msg)
 
         if isinstance(media_value, int):
@@ -898,7 +899,7 @@ class Decoder:
         typed_value = ''
         try:
             typed_value = getattr(Decoder, 'decode_%s' % value_type)(byte_iter)
-        except DecodeError, msg:
+        except DecodeError as msg:
             raise DecodeError('Could not decode Typed-parameter: %s' % msg)
         except:
             debug('A fatal error occurred, probably due to an '
@@ -1333,7 +1334,7 @@ class Decoder:
             try:
                 decoded_value = getattr(Decoder,
                                        'decode_%s' % wap_value_type)(byte_iter)
-            except DecodeError, msg:
+            except DecodeError as msg:
                 raise DecodeError('Could not decode Wap-value: %s' % msg)
             except:
                 debug('An error occurred, probably due to an '
@@ -1664,7 +1665,7 @@ class Encoder:
                     ret = getattr(Encoder,
                                   'encode_%s' % expected_type)(parameter_value)
                     encoded_parameter.extend(ret)
-                except EncodeError, msg:
+                except EncodeError as msg:
                     raise EncodeError('Error encoding param value: %s' % msg)
                 except:
                     debug('A fatal error occurred, probably due to an '
@@ -1799,7 +1800,7 @@ class Encoder:
             try:
                 ret = getattr(Encoder, 'encode_%s' % wap_value_type)(value)
                 encoded_header.extend(ret)
-            except EncodeError, msg:
+            except EncodeError as msg:
                 raise EncodeError('Error encoding Wap-value: %s' % msg)
             except:
                 debug('A fatal error occurred, probably due to an '
@@ -2045,7 +2046,7 @@ class Encoder:
             # ...now try Accept-general-form
             try:
                 encoded_media_range = Encoder.encode_media_type(accept_value)
-            except EncodeError, msg:
+            except EncodeError as msg:
                 raise EncodeError('Cannot encode Accept-value: %s' % msg)
 
             value_length = Encoder.encode_value_length(len(encoded_media_range))

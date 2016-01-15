@@ -13,6 +13,8 @@ from messaging.utils import (debug, encode_str, clean_number,
 from messaging.sms.base import SmsBase
 from messaging.sms.gsm0338 import is_gsm_text
 from messaging.sms.pdu import Pdu
+from past.builtins import range
+from builtins import chr
 
 VALID_NUMBER = re.compile("^\+?\d{3,20}$")
 
@@ -240,7 +242,7 @@ class SmsSubmit(SmsBase):
             msgvp_pdu = ''.join(map(encode_str, map(chr, msgvp)))
 
         # UDL + UD
-        message_pdu = ""
+        message_pdu = b""
 
         if self.fmt == 0x00:
             self.text_gsm = self.text.encode("gsm0338")
@@ -314,9 +316,9 @@ class SmsSubmit(SmsBase):
                        chr(sms_ref) + chr(total_parts) + chr(i))
                 padding = " "
             else:
-                udh = (unichr(int("%04x" % ((udh_len << 8) | mid), 16)) +
-                       unichr(int("%04x" % ((data_len << 8) | sms_ref), 16)) +
-                       unichr(int("%04x" % ((total_parts << 8) | i), 16)))
+                udh = (chr(int("%04x" % ((udh_len << 8) | mid), 16)) +
+                       chr(int("%04x" % ((data_len << 8) | sms_ref), 16)) +
+                       chr(int("%04x" % ((total_parts << 8) | i), 16)))
                 padding = ""
 
             pdu_msgs.append(packing_func(padding + msg, udh))
